@@ -19,16 +19,13 @@ namespace Day01
             return _totals.Max();
         }
 
-        // public int Solve2()
-        // {
-        //     var count = 0;
-        //     for (var i = 3; i <= _depths.Count - 1; i++)
-        //     {
-        //         if (WindowSumAt(i) > WindowSumAt(i - 1)) count++;
-        //     }
-        //
-        //     return count;
-        // }
+        public int Solve2()
+        {
+            return _totals
+                .OrderByDescending(x => x)
+                .Take(3)
+                .Sum();
+        }
 
 
         void GetInputs()
