@@ -8,6 +8,7 @@ namespace Day03
     public class Solver
     {
         private List<List<string>> _inputs;
+        private List<string[]> _inputGroups;
 
         public Solver()
         {
@@ -27,6 +28,23 @@ namespace Day03
             return commons.Sum(CalculatePriority);
         }
 
+        public int Solve2()
+        {
+            var badges = "";
+
+            foreach (var group in _inputGroups)
+            {
+                var badge =
+                    group[0]
+                        .Intersect(group[1])
+                        .Intersect(group[2])
+                        .First();
+                badges += badge;
+            }
+
+            return badges.Sum(CalculatePriority);
+        }
+
         int CalculatePriority(char c)
         {
             var number = (int)c;
@@ -44,6 +62,7 @@ namespace Day03
             Console.WriteLine($"Read {text.Length} inputs");
             
             _inputs = text.Select(ParseLine).ToList();
+            _inputGroups = text.Chunk(3).ToList();
         }
 
         List<string> ParseLine(string line)
