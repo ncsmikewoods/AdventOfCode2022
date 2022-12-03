@@ -7,43 +7,8 @@ namespace Day02
 {
     public class Solver
     {
-        private List<int> _totals;
-        private List<string[]> _inputs;
-
-        private Dictionary<string, string> _winners = new()
-        {
-            { "X", "C" },
-            { "Y", "A" },
-            { "Z", "B" },
-        };
-        
-        private Dictionary<string, string> _loserTo = new()
-        {
-            { "A", "Z"},
-            { "B", "X"},
-            { "C", "Y"},
-        };
-        
-        private Dictionary<string, string> _winnerTo = new()
-        {
-            { "A", "Y"},
-            { "B", "Z"},
-            { "C", "X"},
-        };
-        
-        private Dictionary<string, string> _equals = new()
-        {
-            { "A", "X" },
-            { "B", "Y" },
-            { "C", "Z" },
-        };
-
-        private Dictionary<string, int> _points = new()
-        {
-            {"X", 1},
-            {"Y", 2},
-            {"Z", 3},
-        };
+        private List<int[]> _inputs;
+        private readonly List<int> _key = new() { 3, 1, 2, 3, 1 };
 
         public Solver()
         {
@@ -52,7 +17,7 @@ namespace Day02
 
         public int Solve1()
         {
-            return _inputs.Sum(x => CalculateScorePart1(x[1], x[0]));
+            return _inputs.Sum(x => CalculateScorePart1(x[0], x[1]));
         }
 
         public int Solve2()
@@ -60,37 +25,57 @@ namespace Day02
             return _inputs.Sum(x => CalculateScorePart2(x[0], x[1]));
         }
 
-        int CalculateScorePart1(string me, string them)
+        int CalculateScorePart1(int them, int me)
         {
-            var points = _points[me] + CalculateHeadToHeadPart1(me, them);
-            return points;
-        }
-
-        int CalculateHeadToHeadPart1(string me, string them)
-        {
-            if (me == _equals[them]) return 3;
-            return _winners[me] == them ? 6 : 0;
+            var outcome = CalculateOutcome(them, me);
+            return me + CalculateOutcomePoints(outcome);
         }
         
-        int CalculateScorePart2(string them, string outcome)
+        int CalculateScorePart2(int them, int outcome)
         {
-            var (headToHeadScore, myMove) = CalculateHeadToHeadPart2(them, outcome);
-            
-            var points = _points[myMove] + headToHeadScore;
-            return points;
-        }
-        
-        (int, string) CalculateHeadToHeadPart2(string them, string outcome)
-        {
-            if (outcome == "Y") return (3, _equals[them]);
-            return outcome == "X" ? (0, _loserTo[them]) : (6, _winnerTo[them]);
+            var myMove = CalculateMyMove(them, outcome);
+
+            var outcomePoints = CalculateOutcomePoints(outcome);
+            return myMove + outcomePoints;
         }
 
+        int CalculateOutcome(int them, int me)
+        {
+            // TODO : Ideally, refactor for no comparisons
+            if (them == me) return 2;
+            return _key[me - 1] == them ? 3 : 1;
+        }
+        
+        int CalculateMyMove(int them, int outcome)
+        {
+            // to lose offset theirs to the right, to win offset theirs to the left
+            var offset = outcome - 2;
+            return _key[them + offset];
+        }
+
+        static int CalculateOutcomePoints(int outcome)
+        {
+            return (outcome - 1) * 3; // L = 0, D = 3, W = 6
+        }
+        
         void GetInputs()
         {
             var text = File.ReadAllLines("input.txt");
             Console.WriteLine($"Read {text.Length} inputs");
-            _inputs = text.Select(x => x.Split(" ")).ToList();
+            _inputs = text.Select(ParseLine).ToList();
+        }
+
+        static int[] ParseLine(string line)
+        {
+            var tokens = line.Split(" ").Select(Normalize);
+            return tokens.ToArray();
+        }
+
+        static int Normalize(string s)
+        {
+            var number = (int)s.First();
+            if (number >= 88) number -= 23; // Convert x/y/z into a/b/c
+            return number - 64; // Convert a/b/c to 1/2/3
         }
     }
 }
