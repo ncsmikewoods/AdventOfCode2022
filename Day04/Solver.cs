@@ -24,7 +24,8 @@ namespace Day04
 
         public int Solve2()
         {
-            return 0;
+            return _inputPairs
+                .Count(x => x[0].Overlaps(x[1]));
         }
 
         void GetInputs()
@@ -61,6 +62,15 @@ namespace Day04
         public bool FullyContains(Range other)
         {
             return Start <= other.Start && End >= other.End;
+        }
+
+        public bool Overlaps(Range other)
+        {
+            if (FullyContains(other) || other.FullyContains(this)) return true;
+
+            if (Start > other.End || End < other.Start) return false;
+
+            return true;
         }
     }
 }

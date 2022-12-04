@@ -9,7 +9,7 @@ namespace Day04
             var solver = new Solver();
 
             Part1(solver);
-            // Part2(solver);
+            Part2(solver);
         }
 
         static void Part1(Solver solver)
