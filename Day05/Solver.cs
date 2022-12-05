@@ -26,7 +26,6 @@ namespace Day05
 
                 for (var i = 0; i < count; i++)
                 {
-                    if (_stacks[source].Count == 0) continue;
                     _stacks[destination].Push(_stacks[source].Pop());
                 }
             }
@@ -34,10 +33,25 @@ namespace Day05
             return BuildOutput(_stacks);
         }
 
-        public int Solve2()
+        public string Solve2()
         {
             GetInputs();
-            return 0;
+            
+            foreach (var move in _moves)
+            {
+                var count = move[0];
+                var source = move[1];
+                var destination = move[2];
+
+                var items = Enumerable.Range(1, count).Select(_ => _stacks[source].Pop());
+
+                foreach (var item in items.Reverse())
+                {
+                    _stacks[destination].Push(item);
+                }
+            }
+            
+            return BuildOutput(_stacks);
         }
 
         string BuildOutput(List<Stack<char>> stacks)
