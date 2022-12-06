@@ -68,7 +68,6 @@ namespace Day05
         void GetInputs()
         {
             var text = File.ReadAllText("input.txt");
-            // Console.WriteLine($"Read {text.Length} inputs");
 
             var halves = text.Split($"{Environment.NewLine}{Environment.NewLine}");
 
@@ -89,6 +88,7 @@ namespace Day05
                     .Select(_ => new Stack<char>())
                     .ToList();
 
+            // Iterate through the stack input left to right, bottom to top
             for (var row = lines.Length - 2; row >= 0; row--)
             {
                 for (var col = 0; col < stackCount; col++)
