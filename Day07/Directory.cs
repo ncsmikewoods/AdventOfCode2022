@@ -15,20 +15,16 @@ public class Directory : FileSystemEntity
 
     public string DirectoryName { get; }
     
-    public double CalculateSize(ref double runningSize)
+    public double CalculateSize()
     {
         var fileSizes = Files.Sum(x => x.Size);
         double directorySizes = 0;
         foreach (var x in Subdirectories)
         {
-            directorySizes += x.CalculateSize(ref runningSize);
+            directorySizes += x.CalculateSize();
         };
 
-        var combined = fileSizes + directorySizes;
-        
-        if (combined <= 100_000) runningSize += combined;
-
-        return combined;
+        return fileSizes + directorySizes;
     }
 
     public List<Directory> GetAllSubdirectories()

@@ -16,24 +16,27 @@ public class Solver
 
     public double Solve1()
     {
-        var size = 0d;
-        _head.CalculateSize(ref size);
-        return size;
+        var directories = _head.GetAllSubdirectories();
+        
+        return
+            directories
+                .Select(x => x.CalculateSize())
+                .Where(x => x <= 100_000)
+                .Sum();
     }
     
     public double Solve2()
     {
-        var blah = 0d; // I can't be bothered to refactor this right now
         var maxSize = 70_000_000;
         var totalSpaceNeeded = 30_000_000;
-        var currentUnusedSpace = maxSize - _head.CalculateSize(ref blah);
+        var currentUnusedSpace = maxSize - _head.CalculateSize();
         var currentSpaceNeeded = totalSpaceNeeded - currentUnusedSpace;
         
         var directories = _head.GetAllSubdirectories();
         
         var candidates = 
             directories
-                .Select(x => new {x, dir = x.DirectoryName,  size = x.CalculateSize(ref blah)})
+                .Select(x => new {x, dir = x.DirectoryName,  size = x.CalculateSize()})
                 .Where(x => x.size > currentSpaceNeeded)
                 .ToList();
 
@@ -58,17 +61,19 @@ public class Solver
 
                 if (command.Directory == "/")
                 {
+                    // Go to the top of the tree
                     current = head;
                     continue;
                 }
 
                 if (command.Directory == "..")
                 {
+                    // Move up a level
                     current = current.Parent;
                     continue;
                 }
 
-                // cd into a child
+                // Go into a child (by name)
                 var newCurrent = current.Subdirectories.Single(x => x.DirectoryName == command.Directory);
                 newCurrent.Parent = current;
                 current = newCurrent;
@@ -85,17 +90,18 @@ public class Solver
 
     void GetInputs()
     {
-        var lines = System.IO.File.ReadAllLines("input.txt");
+        var lines = System.IO.File.ReadAllLines("inputshort.txt");
 
         var commandLines = 
             lines
                 .Select((line,i) => new {line,i})
                 .Where(x => x.line.StartsWith("$"))
                 .ToList();
+        commandLines.Add(new {line = "", i = lines.Length}); // Make a fake command at EOF
 
         _commands = new List<CommandBase>();
         
-        for (var index = 0; index < commandLines.Count; index++)
+        for (var index = 0; index < commandLines.Count - 1; index++)
         {
             var commandLine = commandLines[index];
             var command = commandLine.line;
@@ -108,9 +114,8 @@ public class Solver
             }
 
             // Get the outputs of ls
-            // bullshittery here because LS output can get terminated by EOF instead of the start of another command
-            int? nextCommandIndex = index < commandLines.Count - 1 ? commandLines[index + 1].i : null;
-            var lsOutput = nextCommandIndex is not null ? lines[(i + 1)..nextCommandIndex.Value] : lines[(i + 1)..];
+            var nextCommandIndex = commandLines[index + 1].i;
+            var lsOutput = lines[(i + 1)..nextCommandIndex];
             
             _commands.Add(new ListCommand(lsOutput));
         }
