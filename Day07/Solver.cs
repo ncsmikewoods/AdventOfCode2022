@@ -1,32 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Input;
 
 namespace Day07;
 
 public class Solver
 {
     private List<CommandBase> _commands;
+    private Directory _head;
 
     public Solver()
     {
         GetInputs();
+        _head = BuildFileSystem();
     }
 
     public double Solve1()
     {
-        var head = BuildFileSystem();
-
         var size = 0d;
-        
-        ((Directory)head).CalculateSize(ref size);
-
+        _head.CalculateSize(ref size);
         return size;
     }
+    
+    public double Solve2()
+    {
+        var blah = 0d; // I can't be bothered to refactor this right now
+        var maxSize = 70_000_000;
+        var totalSpaceNeeded = 30_000_000;
+        var currentUnusedSpace = maxSize - _head.CalculateSize(ref blah);
+        var currentSpaceNeeded = totalSpaceNeeded - currentUnusedSpace;
+        
+        var directories = _head.GetAllSubdirectories();
+        
+        var candidates = 
+            directories
+                .Select(x => new {x, dir = x.DirectoryName,  size = x.CalculateSize(ref blah)})
+                .Where(x => x.size > currentSpaceNeeded)
+                .ToList();
 
-    FileSystemEntity BuildFileSystem()
+        var winner = 
+            candidates
+                .OrderBy(x => x.size)
+                .First(); 
+        
+        return winner.size;
+    }
+
+    Directory BuildFileSystem()
     {
         FileSystemEntity head = new Directory("/");
         FileSystemEntity current = head;
@@ -61,14 +80,9 @@ public class Solver
             }
         }
 
-        return head;
+        return (Directory)head;
     }
 
-    public int Solve2()
-    {
-        return 0;
-    }
-    
     void GetInputs()
     {
         var lines = System.IO.File.ReadAllLines("input.txt");
@@ -100,79 +114,5 @@ public class Solver
             
             _commands.Add(new ListCommand(lsOutput));
         }
-    }
-}
-
-public abstract class FileSystemEntity
-{
-    public abstract bool IsFile { get; set; }
-
-    public FileSystemEntity Parent { get; set; }
-
-    public List<FileSystemEntity> Children { get; set; } = new();
-
-    public List<Directory> Subdirectories => 
-        Children
-            .Where(x => !x.IsFile)
-            .Select(x => (Directory)x)
-            .ToList();
-    
-    public List<File> Files => 
-        Children
-            .Where(x => x.IsFile)
-            .Select(x => (File)x)
-            .ToList();
-}
-
-public class File : FileSystemEntity
-{
-    public File(string entryRaw)
-    {
-        var tokens = entryRaw.Split(" ");
-        Size = int.Parse(tokens[0]);
-        FileName = tokens[1];
-    }
-    
-    public override bool IsFile { get; set; } = true;
-
-    public string FileName { get; }
-
-    public int Size { get; }
-}
-
-public class Directory : FileSystemEntity
-{
-    public Directory(string entryRaw)
-    {
-        var tokens = entryRaw.Split(" ");
-        DirectoryName = tokens.Last();
-    }
-    
-    public override bool IsFile { get; set; } = false;
-
-    public string DirectoryName { get; }
-    
-    public double CalculateSize(ref double runningSize)
-    {
-        var fileSizes = Files.Sum(x => x.Size);
-        double directorySizes = 0;
-        foreach (var x in Subdirectories)
-        {
-            directorySizes += x.CalculateSize(ref runningSize);
-        };
-
-        var combined = fileSizes + directorySizes;
-        
-        if (combined <= 100_000) runningSize += combined;
-
-        return combined;
-    }
-
-    public List<Directory> GetAllSubdirectories()
-    {
-        return 
-            Subdirectories
-                .SelectMany(x => x.Subdirectories)
-                .ToList();
     }
 }
