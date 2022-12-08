@@ -40,11 +40,7 @@ public class Solver
         {
             for (var j = 1; j < _gridListRows.Count - 1; j++)
             {
-                var scenicScore = 
-                    GetViewingDistanceLeft(i, j) 
-                    * GetViewingDistanceRight(i, j) 
-                    * GetViewingDistanceUp(i, j) 
-                    * GetViewingDistanceDown(i, j);
+                var scenicScore = GetScenicScore(i, j);
                 scenicScores.Add(scenicScore);
             }
         }
@@ -60,101 +56,19 @@ public class Solver
         }
         
         return 
-            IsVisibleToLeft(i, j) 
-            || IsVisibleToRight(i, j)
-            || IsVisibleUp(i, j)
-            || IsVisibleDown(i, j);
+            Helper.IsVisibleToLeft(i, j, _gridListRows) 
+            || Helper.IsVisibleToRight(i, j, _gridListRows)
+            || Helper.IsVisibleUp(i, j, _gridListCols)
+            || Helper.IsVisibleDown(i, j, _gridListCols);
     }
 
-    bool IsVisibleToLeft(int rowIndex, int colIndex)
+    int GetScenicScore(int i, int j)
     {
-        var height = _gridListRows[rowIndex][colIndex];
-        var row = _gridListRows[rowIndex];
-
-        var subList = row.Take(colIndex + 1).ToList();
-        var tallTreeCount = subList.Count(x => x >= height);
-
-        return tallTreeCount == 1;
-    }
-
-    int GetViewingDistance(List<int> sublist)
-    {
-        var distance = 0;
-        
-        for (var i = 1; i < sublist.Count; i++)
-        {
-            distance++;
-            if (sublist[i] >= sublist[0]) break;
-        }
-
-        return distance;
-    }
-    
-    int GetViewingDistanceLeft(int rowIndex, int colIndex)
-    {
-        var row = _gridListRows[rowIndex];
-
-        var subList = row.Take(colIndex + 1).ToList();
-        subList.Reverse();
-        return GetViewingDistance(subList);
-    }
-    
-    int GetViewingDistanceRight(int rowIndex, int colIndex)
-    {
-        var row = _gridListRows[rowIndex];
-
-        var subList = row.Skip(colIndex).Take(int.MaxValue).ToList();
-        return GetViewingDistance(subList);
-    }
-    
-    int GetViewingDistanceUp(int rowIndex, int colIndex)
-    {
-        var col = _gridListCols[colIndex];
-
-        var subList = col.Take(rowIndex + 1).ToList();
-        subList.Reverse();
-        return GetViewingDistance(subList);
-    }
-    
-    int GetViewingDistanceDown(int rowIndex, int colIndex)
-    {
-        var col = _gridListCols[colIndex];
-
-        var subList = col.Skip(rowIndex).Take(int.MaxValue).ToList();
-        return GetViewingDistance(subList);
-    }
-    
-    bool IsVisibleToRight(int rowIndex, int colIndex)
-    {
-        var height = _gridListRows[rowIndex][colIndex];
-        var row = _gridListRows[rowIndex];
-
-        var subList = row.Skip(colIndex).Take(int.MaxValue).ToList();
-        var tallTreeCount = subList.Count(x => x >= height);
-
-        return tallTreeCount == 1;
-    }
-    
-    bool IsVisibleUp(int rowIndex, int colIndex)
-    {
-        var height = _gridListRows[rowIndex][colIndex];
-        var col = _gridListCols[colIndex];
-
-        var subList = col.Take(rowIndex + 1).ToList();
-        var tallTreeCount = subList.Count(x => x >= height);
-
-        return tallTreeCount == 1;
-    }
-    
-    bool IsVisibleDown(int rowIndex, int colIndex)
-    {
-        var height = _gridListRows[rowIndex][colIndex];
-        var col = _gridListCols[colIndex];
-
-        var subList = col.Skip(rowIndex).Take(int.MaxValue).ToList();
-        var tallTreeCount = subList.Count(x => x >= height);
-
-        return tallTreeCount == 1;
+        return
+            Helper.GetViewingDistanceLeft(i, j, _gridListRows)
+            * Helper.GetViewingDistanceRight(i, j, _gridListRows)
+            * Helper.GetViewingDistanceUp(i, j, _gridListCols)
+            * Helper.GetViewingDistanceDown(i, j, _gridListCols);
     }
     
     void GetInputs()
