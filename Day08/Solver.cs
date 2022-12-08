@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Day08;
@@ -18,8 +17,6 @@ public class Solver
     public int Solve1()
     {
         var count = 0;
-
-        var blah = new List<string>();
         
         for (var i = 0; i < _gridListRows.Count; i++)
         {
@@ -28,7 +25,6 @@ public class Solver
                 if (IsVisible(i, j))
                 {
                     count++;
-                    blah.Add($"{i},{j}");
                 }
             }
         }
@@ -38,7 +34,22 @@ public class Solver
     
     public int Solve2()
     {
-        return 0;
+        var scenicScores = new List<int>();
+        
+        for (var i = 1; i < _gridListRows.Count - 1; i++)
+        {
+            for (var j = 1; j < _gridListRows.Count - 1; j++)
+            {
+                var scenicScore = 
+                    GetViewingDistanceLeft(i, j) 
+                    * GetViewingDistanceRight(i, j) 
+                    * GetViewingDistanceUp(i, j) 
+                    * GetViewingDistanceDown(i, j);
+                scenicScores.Add(scenicScore);
+            }
+        }
+        
+        return scenicScores.Max();
     }
 
     bool IsVisible(int i, int j)
@@ -64,6 +75,53 @@ public class Solver
         var tallTreeCount = subList.Count(x => x >= height);
 
         return tallTreeCount == 1;
+    }
+
+    int GetViewingDistance(List<int> sublist)
+    {
+        var distance = 0;
+        
+        for (var i = 1; i < sublist.Count; i++)
+        {
+            distance++;
+            if (sublist[i] >= sublist[0]) break;
+        }
+
+        return distance;
+    }
+    
+    int GetViewingDistanceLeft(int rowIndex, int colIndex)
+    {
+        var row = _gridListRows[rowIndex];
+
+        var subList = row.Take(colIndex + 1).ToList();
+        subList.Reverse();
+        return GetViewingDistance(subList);
+    }
+    
+    int GetViewingDistanceRight(int rowIndex, int colIndex)
+    {
+        var row = _gridListRows[rowIndex];
+
+        var subList = row.Skip(colIndex).Take(int.MaxValue).ToList();
+        return GetViewingDistance(subList);
+    }
+    
+    int GetViewingDistanceUp(int rowIndex, int colIndex)
+    {
+        var col = _gridListCols[colIndex];
+
+        var subList = col.Take(rowIndex + 1).ToList();
+        subList.Reverse();
+        return GetViewingDistance(subList);
+    }
+    
+    int GetViewingDistanceDown(int rowIndex, int colIndex)
+    {
+        var col = _gridListCols[colIndex];
+
+        var subList = col.Skip(rowIndex).Take(int.MaxValue).ToList();
+        return GetViewingDistance(subList);
     }
     
     bool IsVisibleToRight(int rowIndex, int colIndex)
