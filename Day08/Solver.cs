@@ -6,7 +6,6 @@ namespace Day08;
 public class Solver
 {
     private List<List<int>> _gridListRows;
-
     private List<List<int>> _gridListCols;
 
     public Solver()
@@ -75,6 +74,7 @@ public class Solver
     {
         var lines = System.IO.File.ReadAllLines("input.txt");
 
+        // Create/initialize a row-wise and column-wise grid
         _gridListRows = Enumerable.Range(1, lines.Length).Select(_ => Enumerable.Repeat(0, lines.Length).ToList()).ToList();
         _gridListCols = Enumerable.Range(1, lines.Length).Select(_ => Enumerable.Repeat(0, lines.Length).ToList()).ToList();
 
