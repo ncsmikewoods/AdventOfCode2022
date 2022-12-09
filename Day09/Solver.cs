@@ -16,7 +16,11 @@ public class Solver
 
     public int Solve1()
     {
-        var rope = new List<Location> { new(0, 0), new(0, 0) };
+        var rope = new List<Location>
+        {
+            new (0, 0), 
+            new (0, 0)
+        };
 
         _visited.Add($"{rope[1].X},{rope[1].Y}");
         
