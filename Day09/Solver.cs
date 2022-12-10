@@ -16,7 +16,6 @@ public class Solver
 
     public int Solve1()
     {
-        return 0;
         _visited = new HashSet<string>();
         
         var rope = new List<Location>();
@@ -27,7 +26,6 @@ public class Solver
         foreach (var move in _moves)
         {
             SimulateMove(move, rope);
-            // PrintVisited(_visited);
         }
 
         return _visited.Count;
@@ -35,7 +33,6 @@ public class Solver
     
     public int Solve2()
     {
-        // return 0;
         _visited = new HashSet<string>();
 
         var rope = new List<Location>();
@@ -43,20 +40,9 @@ public class Solver
 
         _visited.Add($"{rope.Last().X},{rope.Last().Y}");
 
-        // PrintRope(rope);
-
-        // PrintGrid(rope);        
-        
-        var moveCount = 1;
         foreach (var move in _moves)
         {
-            var dir = move.Direction;
-            var mag = move.Magnitude;
             SimulateMove(move, rope);
-            // PrintVisited(_visited);
-            moveCount++;
-            
-            // PrintGrid(rope);
         }
 
         return _visited.Count;
@@ -64,23 +50,17 @@ public class Solver
 
     void SimulateMove(Move move, List<Location> rope)
     {
-        // Console.WriteLine($"Move: {move.Direction} {move.Magnitude}");
         var head = rope[0];
         
         for (var i = 0; i < move.Magnitude; i++)
         {
             MoveHead(move, head);
-            // PrintRope(rope);
             MoveTails(rope);
-            // PrintRope(rope);
         }
-        // Console.WriteLine($"-------------------");
     }
 
     void MoveHead(Move move, Location head)
     {
-        // Console.WriteLine("Moving head...");
-        
         if (move.Direction == "R") head.X++;
         if (move.Direction == "L") head.X--;
         if (move.Direction == "U") head.Y++;
@@ -89,20 +69,15 @@ public class Solver
 
     void MoveTails(List<Location> rope)
     {
-        // Console.WriteLine("Moving tails...");
         for (var i = 0; i < rope.Count - 1; i++)
         {
-            // Console.WriteLine("Moving tail " + (j + 1));
-            var effectiveHead = rope[i];
-            var effectiveTail = rope[i+1];
+            var segmentHead = rope[i];
+            var segmentTail = rope[i+1];
                 
-            MoveTail(effectiveHead, effectiveTail);
-                
-            // PrintRope(rope);
+            MoveTail(segmentHead, segmentTail);
                 
             var isEndOfRope = i == rope.Count - 2;
-            if (isEndOfRope) _visited.Add($"{effectiveTail.X},{effectiveTail.Y}");
-            // PrintVisited(_visited);
+            if (isEndOfRope) _visited.Add($"{segmentTail.X},{segmentTail.Y}");
         }
     }
     
@@ -137,71 +112,5 @@ public class Solver
     {
         var tokens = line.Split(" ");
         return new Move(tokens[0], int.Parse(tokens[1]));
-    }
-    
-    void PrintVisited(HashSet<string> visited)
-    {
-        Console.Write("Visited: ");
-        foreach (var location in visited)
-        {
-            Console.Write($"{location}|");
-        }
-        Console.WriteLine();
-    }
-
-    void PrintRope(List<Location> rope)
-    {
-        foreach (var location in rope)
-        {
-            Console.Write($"{location.X},{location.Y}|");
-        }
-        Console.WriteLine();
-    }
-
-    void PrintGrid(List<Location> rope)
-    {
-        Console.WriteLine();
-
-        var leftmost = Math.Min(rope.Min(l => l.X), 0);
-        var rightmost = Math.Max(rope.Max(l => l.X), 0);
-        var topmost = Math.Max(rope.Max(l => l.Y), 0);
-        var bottommost = Math.Min(rope.Min(l => l.Y), 0);
-
-        for (var x = leftmost - 1; x < rightmost + 1; x++)
-        {
-            for (var y = topmost + 1; y > bottommost - 1; y--)
-            {
-                if (rope[0].X == x && rope[0].Y == y)
-                {
-                    Console.Write("H");
-                    continue;
-                }
-                
-                var occupyingTail =
-                    rope
-                        .Select((loc, i) => new { loc, i })
-                        .Skip(1)
-                        .Where(elem => elem.loc.X == x && elem.loc.Y == y)
-                        .Select(elem => elem.i)
-                        .FirstOrDefault();
-
-                if (occupyingTail != default)
-                {
-                    Console.Write(occupyingTail);
-                    continue;
-                }
-                
-                if (rope[0].X == 0 && rope[0].Y == 0)
-                {
-                    Console.Write("s");
-                    continue;
-                }
-                
-                Console.Write(".");
-            }
-            Console.WriteLine();
-        }
-        
-        Console.WriteLine();
     }
 }
