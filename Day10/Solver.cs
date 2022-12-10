@@ -24,7 +24,7 @@ public class Solver
 
         var signalStrengths = new List<int>();
 
-        while (cycle <= 220 && instructionIndex < _instructions.Count)
+        while (instructionIndex < _instructions.Count)
         {
             if (_signalCheckpoints.Contains(cycle))
             {
@@ -60,6 +60,60 @@ public class Solver
     
     public int Solve2()
     {
+        Console.WriteLine();
+        var register = 1;
+        var cycle = 1;
+
+        var instructionIndex = 0;
+        var instructionCycle = 1;
+        var lineIndex = 0;
+
+        var signalStrengths = new List<int>(); // TODO : how can we use this?
+
+        while (instructionIndex < _instructions.Count)
+        {
+            if (_signalCheckpoints.Contains(cycle))
+            {
+                signalStrengths.Add(cycle * register);
+            }
+            
+            Console.Write(Math.Abs(register - lineIndex) < 2 ? "#" : ".");
+            
+            var instruction = _instructions[instructionIndex];
+
+            if (instruction.isNoop)
+            {
+                instructionIndex++;
+                instructionCycle = 1;
+            }
+            else // addx
+            {
+                if (instructionCycle == 2)
+                {
+                    register += instruction.Magnitude;
+                    instructionIndex++;
+                    instructionCycle = 1;
+                }
+                else
+                {
+                    instructionCycle++;                    
+                }
+            }
+            
+            if (lineIndex == 39)
+            {
+                lineIndex = 0;
+                Console.WriteLine();
+            }
+            else
+            {
+                lineIndex++;                
+            }
+            
+            cycle++;
+        }
+
+        Console.WriteLine();
         return 0;
     }
 
