@@ -13,9 +13,9 @@ public class Solver
         GetInputs();
     }
 
-    public int Solve1()
+    public double Solve1()
     {
-        int WorryReliefStrategy(int x) => x / 3;
+        double WorryReliefStrategy(double x) => x / 3;
 
         for (var round = 0; round < 20; round++)
         {
@@ -34,11 +34,11 @@ public class Solver
         return topMonkeys.First() * topMonkeys.Last();
     }
     
-    public int Solve2()
+    public double Solve2()
     {
         GetInputs();
 
-        int WorryReliefStrategy(int x) => x;
+        double WorryReliefStrategy(double x) => x;
 
         for (var round = 0; round < 10_000; round++)
         {

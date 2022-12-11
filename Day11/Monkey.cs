@@ -16,20 +16,21 @@ public class Monkey
         Items = lines[0]
             .Replace("  Starting items: ", "")
             .Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries)
-            .Select(int.Parse)
+            .Select(double.Parse)
             .ToList();
+        
         CalculateWorry = OperationBuilder.BuildOperation(lines[1]);
-        GetThrowTarget = OperationBuilder.BuildThrowTarget(lines[2], lines[3], lines[4]);
+        GetThrowTarget = OperationBuilder.BuildThrowTargetSelector(lines[2], lines[3], lines[4]);
     }
     
-    private List<int> Items { get; set; }
+    private List<double> Items { get; set; }
 
-    private Func<int, int> CalculateWorry { get; }
-    private Func<int, int> GetThrowTarget { get; }
+    private Func<double, double> CalculateWorry { get; }
+    private Func<double, int> GetThrowTarget { get; }
 
     public int InspectionCount { get; private set; }
     
-    public void ThrowInspectAndThrowItems(Func<int, int> worryReliefStrategy, List<Monkey> monkeys)
+    public void ThrowInspectAndThrowItems(Func<double, double> worryReliefStrategy, List<Monkey> monkeys)
     {
         InspectionCount += Items.Count;
         
@@ -45,7 +46,7 @@ public class Monkey
         }
     }
     
-    private void Catch(int item)
+    private void Catch(double item)
     {
         Items.Add(item);
     }
