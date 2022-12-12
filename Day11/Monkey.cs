@@ -16,7 +16,7 @@ public class Monkey
         Items = lines[0]
             .Replace("  Starting items: ", "")
             .Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries)
-            .Select(double.Parse)
+            .Select(int.Parse)
             .ToList();
         
         CalculateWorry = OperationBuilder.BuildOperation(lines[1]);
@@ -25,16 +25,16 @@ public class Monkey
         DivisorForTest = int.Parse(lines[2].Replace("  Test: divisible by ", ""));
     }
     
-    public List<double> Items { get; set; }
+    public List<int> Items { get; set; }
 
-    private Func<double, double> CalculateWorry { get; }
-    private Func<double, int> GetThrowTarget { get; }
+    private Func<int, int> CalculateWorry { get; }
+    private Func<int, int> GetThrowTarget { get; }
 
     public int DivisorForTest { get; }
 
     public int InspectionCount { get; private set; }
     
-    public void ThrowInspectAndThrowItems(Func<double, double> worryReliefStrategy, List<Monkey> monkeys)
+    public void ThrowInspectAndThrowItems(Func<int, int> worryReliefStrategy, List<Monkey> monkeys)
     {
         InspectionCount += Items.Count;
         
@@ -50,7 +50,7 @@ public class Monkey
         }
     }
     
-    private void Catch(double item)
+    private void Catch(int item)
     {
         Items.Add(item);
     }

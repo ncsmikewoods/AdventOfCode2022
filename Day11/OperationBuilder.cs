@@ -5,7 +5,7 @@ namespace Day11;
 public static class OperationBuilder
 {
     // TODO : Refactor.  It's very likely the if/thens can be generalized
-    public static Func<double, double> BuildOperation(string line)
+    public static Func<int, int> BuildOperation(string line)
     {
         var tokens = line
             .Replace("  Operation: new = ", "")
@@ -20,7 +20,7 @@ public static class OperationBuilder
         {
             if (operatorRaw == "+")
             {
-                double Operation(double x)
+                int Operation(int x)
                 {
                     return x + x;
                 }
@@ -29,7 +29,7 @@ public static class OperationBuilder
             }
             else
             {
-                double Operation(double x)
+                int Operation(int x)
                 {
                     return x * x;
                 }
@@ -41,7 +41,7 @@ public static class OperationBuilder
         {
             if (operatorRaw == "+")
             {
-                double Operation(double x)
+                int Operation(int x)
                 {
                     return x + operand2Num;
                 }
@@ -50,7 +50,7 @@ public static class OperationBuilder
             }
             else
             {
-                double Operation(double x)
+                int Operation(int x)
                 {
                     return x * operand2Num;
                 }
@@ -60,37 +60,17 @@ public static class OperationBuilder
         }
     }
     
-    public static Func<double, int> BuildThrowTargetSelector(string testLine, string trueLine, string falseLine)
+    public static Func<int, int> BuildThrowTargetSelector(string testLine, string trueLine, string falseLine)
     {
         var divisor = int.Parse(testLine.Replace("  Test: divisible by ", ""));
         var trueTarget = int.Parse(trueLine.Replace("    If true: throw to monkey ", ""));
         var falseTarget = int.Parse(falseLine.Replace("    If false: throw to monkey ", ""));
         
-        int ThrowTargetSelector(double x)
+        int ThrowTargetSelector(int x)
         {
             return x % divisor == 0 ? trueTarget : falseTarget;
         }
 
         return ThrowTargetSelector;
-    }
-
-    static Func<int, int, int> BuildMultiplication(int operand1, int operand2)
-    {
-        int TheThing(int x, int y)
-        {
-            return x * y;
-        }
-
-        return TheThing;
-    }
-    
-    static Func<int, int, int> BuildAddition(int operand1, int operand2)
-    {
-        int TheThing(int x, int y)
-        {
-            return x + y;
-        }
-
-        return TheThing;
     }
 }

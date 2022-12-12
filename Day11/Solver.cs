@@ -15,7 +15,7 @@ public class Solver
 
     public double Solve1()
     {
-        double WorryReliefStrategy(double x) => x / 3;
+        int WorryReliefStrategy(int x) => x / 3;
 
         for (var round = 0; round < 20; round++)
         {
@@ -41,7 +41,7 @@ public class Solver
         var divisors = _monkeys.Select(x => x.DivisorForTest).ToList();
         var lcm = divisors.Aggregate((total, next) => total * next);
         
-        double WorryReliefStrategy(double x) => x % lcm;
+        int WorryReliefStrategy(int x) => x % lcm;
 
         for (var round = 0; round < 10_000; round++)
         {
@@ -67,25 +67,5 @@ public class Solver
 
         var chunks = text.Split($"{Environment.NewLine}{Environment.NewLine}");
         _monkeys = chunks.Select(x => new Monkey(x)).ToList();
-    }
-    
-    private static int FindGCD(IReadOnlyList<int> arr)
-    {
-        var result = arr[0];
-        for (var i = 1; i < arr.Count; i++){
-            result = GCD(arr[i], result);
- 
-            if(result == 1)
-            {
-                return 1;
-            }
-        }
- 
-        return result;
-    }
-    
-    private static int GCD(int a, int b)
-    {
-        return a == 0 ? b : GCD(b % a, a);
     }
 }
