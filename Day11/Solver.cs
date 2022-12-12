@@ -38,7 +38,10 @@ public class Solver
     {
         GetInputs();
 
-        double WorryReliefStrategy(double x) => x;
+        var divisors = _monkeys.Select(x => x.DivisorForTest).ToList();
+        var lcm = divisors.Aggregate((total, next) => total * next);
+        
+        double WorryReliefStrategy(double x) => x % lcm;
 
         for (var round = 0; round < 10_000; round++)
         {
@@ -52,16 +55,37 @@ public class Solver
             _monkeys
                 .OrderByDescending(x => x.InspectionCount)
                 .Take(2)
-                .Select(x => x.InspectionCount);
+                .Select(x => x.InspectionCount)
+                .ToList();
         
-        return topMonkeys.First() * topMonkeys.Last();
+        return ((double)topMonkeys.First()) * ((double)topMonkeys.Last());
     }
 
     void GetInputs()
     {
-        var text = System.IO.File.ReadAllText("inputshort.txt");
+        var text = System.IO.File.ReadAllText("input.txt");
 
         var chunks = text.Split($"{Environment.NewLine}{Environment.NewLine}");
         _monkeys = chunks.Select(x => new Monkey(x)).ToList();
+    }
+    
+    private static int FindGCD(IReadOnlyList<int> arr)
+    {
+        var result = arr[0];
+        for (var i = 1; i < arr.Count; i++){
+            result = GCD(arr[i], result);
+ 
+            if(result == 1)
+            {
+                return 1;
+            }
+        }
+ 
+        return result;
+    }
+    
+    private static int GCD(int a, int b)
+    {
+        return a == 0 ? b : GCD(b % a, a);
     }
 }

@@ -21,12 +21,16 @@ public class Monkey
         
         CalculateWorry = OperationBuilder.BuildOperation(lines[1]);
         GetThrowTarget = OperationBuilder.BuildThrowTargetSelector(lines[2], lines[3], lines[4]);
+        
+        DivisorForTest = int.Parse(lines[2].Replace("  Test: divisible by ", ""));
     }
     
-    private List<double> Items { get; set; }
+    public List<double> Items { get; set; }
 
     private Func<double, double> CalculateWorry { get; }
     private Func<double, int> GetThrowTarget { get; }
+
+    public int DivisorForTest { get; }
 
     public int InspectionCount { get; private set; }
     
