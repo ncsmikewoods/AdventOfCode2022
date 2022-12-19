@@ -28,8 +28,6 @@ public class Node
     public string Id { get; }
     public int Height { get; set; }
     public List<Node> Neighbors { get; set; } = new();
-    public Node Parent { get; set; }
     public bool IsDestination { get; set; }
     public bool IsStart { get; set; }
-    public bool IsLeaf => Neighbors.Count == 0;
 }

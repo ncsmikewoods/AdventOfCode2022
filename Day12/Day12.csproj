@@ -12,9 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="inputmedium.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="inputshort.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

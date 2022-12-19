@@ -19,6 +19,14 @@ public class Solver
     {
         return GetDistance(_start);
     }
+    
+    public int Solve2()
+    {
+        return _nodes
+            .Where(x => x.Height == 1)
+            .Select(GetDistance)
+            .Min();
+    }
 
     int GetDistance(Node start)
     {
@@ -26,6 +34,7 @@ public class Solver
         var visited = new Dictionary<Node, List<Node>>{ {start, new List<Node>()} };
         queue.Enqueue(start);
 
+        // Breadth First Search
         while (queue.Count > 0)
         {
             var current = queue.Dequeue();
@@ -47,18 +56,14 @@ public class Solver
             }
         }
 
-        return visited[_destination].Count;
-    }
-    
-    public int Solve2()
-    {
-        return 0;
+        return visited.ContainsKey(_destination) 
+            ? visited[_destination].Count 
+            : int.MaxValue;
     }
 
     void GetInputs()
     {
         // var lines = System.IO.File.ReadAllLines("inputshort.txt");
-        // var lines = System.IO.File.ReadAllLines("inputmedium.txt");
         var lines = System.IO.File.ReadAllLines("input.txt");
         BuildGraph(lines);
     }
