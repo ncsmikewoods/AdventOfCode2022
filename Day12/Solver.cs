@@ -6,10 +6,9 @@ namespace Day12;
 
 public class Solver
 {
+    private List<Node> _nodes;    
     private Node _start;
-    private List<Node> _nodes;
     private Node _destination;
-    private Dictionary<string, Node> _map;
 
     public Solver()
     {
@@ -18,23 +17,14 @@ public class Solver
 
     public int Solve1()
     {
-        //  1  procedure BFS(G, root) is
-        //  2      let Q be a queue
-        //  3      label root as explored
-        //  4      Q.enqueue(root)
-        //  5      while Q is not empty do
-        //  6          v := Q.dequeue()
-        //  7          if v is the goal then
-        //  8              return v
-        //  9          for all edges from v to w in G.adjacentEdges(v) do
-        // 10              if w is not labeled as explored then
-        // 11                  label w as explored
-        // 12                  w.parent := v
-        // 13                  Q.enqueue(w)
+        return GetDistance(_start);
+    }
 
+    int GetDistance(Node start)
+    {
         var queue = new Queue<Node>();
-        var visited = new Dictionary<Node, List<Node>>{ {_start, new List<Node>()} };
-        queue.Enqueue(_start);
+        var visited = new Dictionary<Node, List<Node>>{ {start, new List<Node>()} };
+        queue.Enqueue(start);
 
         while (queue.Count > 0)
         {
@@ -54,9 +44,6 @@ public class Solver
                 
                 visited[neighbor] = pathToNeighbor;
                 queue.Enqueue(neighbor);
-                
-                // something about recording this?
-                // store path to that node
             }
         }
 
@@ -73,15 +60,15 @@ public class Solver
         // var lines = System.IO.File.ReadAllLines("inputshort.txt");
         // var lines = System.IO.File.ReadAllLines("inputmedium.txt");
         var lines = System.IO.File.ReadAllLines("input.txt");
-        _start = BuildGraph(lines);
+        BuildGraph(lines);
     }
 
-    Node BuildGraph(string[] lines)
+    void BuildGraph(string[] lines)
     {
         _nodes = new List<Node>();
-        _map = new Dictionary<string, Node>();
+        var map = new Dictionary<string, Node>();
         
-        // create graph nodes
+        // Create graph nodes
         for (var i = 0; i < lines.Length; i++)
         {
             for (var j = 0; j < lines[i].Length; j++)
@@ -90,17 +77,16 @@ public class Solver
                 var here = new Node(element, $"{i},{j}");
                 
                 _nodes.Add(here);
-                _map[$"{i},{j}"] = here;
+                map[$"{i},{j}"] = here;
             }
         }
 
-        // establish neighbors.  Graph has cycles at this point
+        // Calculate valid neighbors
         for (var i = 0; i < lines.Length; i++)
         {
             for (var j = 0; j < lines[i].Length; j++)
             {
-                // get the node here
-                var node = _map[$"{i},{j}"];
+                var node = map[$"{i},{j}"];
                 if (node.IsDestination) continue;
         
                 var neighborKeys = new[]
@@ -113,7 +99,7 @@ public class Solver
         
                 foreach (var neighborKey in neighborKeys)
                 {
-                    if (_map.TryGetValue(neighborKey, out var neighbor))
+                    if (map.TryGetValue(neighborKey, out var neighbor))
                     {
                         if (neighbor.Height - 1 <= node.Height)
                         {
@@ -124,10 +110,7 @@ public class Solver
             }
         }
         
-
-        var head = _nodes.First(x => x.IsStart);
+        _start = _nodes.First(x => x.IsStart);
         _destination = _nodes.First(x => x.IsDestination);
-        
-        return head;
     }
 }
