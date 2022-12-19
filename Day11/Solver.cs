@@ -21,7 +21,7 @@ public class Solver
         {
             foreach (var monkey in _monkeys)
             {
-                monkey.ThrowInspectAndThrowItems(WorryReliefStrategy, _monkeys);
+                monkey.InspectAndThrowItems(WorryReliefStrategy, _monkeys);
             }
         }
 
@@ -47,7 +47,7 @@ public class Solver
         {
             foreach (var monkey in _monkeys)
             {
-                monkey.ThrowInspectAndThrowItems(WorryReliefStrategy, _monkeys);
+                monkey.InspectAndThrowItems(WorryReliefStrategy, _monkeys);
             }
         }
 

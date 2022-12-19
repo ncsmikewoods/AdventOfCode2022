@@ -34,7 +34,7 @@ public class Monkey
 
     public int InspectionCount { get; private set; }
     
-    public void ThrowInspectAndThrowItems(Func<int, int> worryReliefStrategy, List<Monkey> monkeys)
+    public void InspectAndThrowItems(Func<int, int> worryReliefStrategy, List<Monkey> monkeys)
     {
         InspectionCount += Items.Count;
         
