@@ -8,6 +8,7 @@ namespace Day13;
 public class Solver
 {
     private List<Pair> _pairs = new();
+    private List<ElementList> _packetList;
 
     public Solver()
     {
@@ -20,12 +21,12 @@ public class Solver
 
         for (var i = 0; i < _pairs.Count; i++)
         {
-            Console.WriteLine($"== Pair {i+1} ==");
+            // Console.WriteLine($"== Pair {i+1} ==");
             if (_pairs[i].IsSorted())
             {
                 sortedPairs.Add(i+1);
             }
-            Console.WriteLine();
+            // Console.WriteLine();
         }
         
         return sortedPairs.Sum();
@@ -33,7 +34,20 @@ public class Solver
 
     public int Solve2()
     {
-        return 0;
+        var dividerPackets = new List<ElementList>
+        {
+            ElementFactory.BuildPacket("[[2]]"),
+            ElementFactory.BuildPacket("[[6]]")
+        };
+        
+        var packets = _packetList.ToList();
+        packets.AddRange(dividerPackets);
+
+        var sorted = packets.OrderBy(x => x).ToList();
+
+        var dividerLocation1 = sorted.IndexOf(dividerPackets[0]) + 1;
+        var dividerLocation2 = sorted.IndexOf(dividerPackets[1]) + 1;
+        return dividerLocation1 * dividerLocation2;
     }
 
     void GetInputs()
@@ -48,5 +62,16 @@ public class Solver
             var pair = new Pair(pairRaw);
             _pairs.Add(pair);
         }
+
+        _packetList = GetAllPackets(text);
+    }
+
+    List<ElementList> GetAllPackets(string text)
+    {
+        var lines = text.Split($"{Environment.NewLine}", StringSplitOptions.RemoveEmptyEntries);
+        return 
+            lines
+                .Select(ElementFactory.BuildPacket)
+                .ToList();
     }
 }

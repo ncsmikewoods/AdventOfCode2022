@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Day13;
 
-public abstract class Element
+public abstract class Element : IComparable<Element>
 {
     public List<Element> Elements { get; set; }
     
@@ -16,7 +16,7 @@ public abstract class Element
 
     public Result IsSortedWith(Element right)
     {
-        Console.WriteLine($"- Compare {ToString()} vs {right.ToString()}");
+        // Console.WriteLine($"- Compare {ToString()} vs {right.ToString()}");
         
         if (IsList && right.IsList)
         {
@@ -40,7 +40,7 @@ public abstract class Element
             var leftList = ((ElementValue)this).ConvertToList();
             var rightList = (ElementList)right;
             
-            Console.WriteLine($"Mixed types; convert left to {leftList} and retry comparison");
+            // Console.WriteLine($"Mixed types; convert left to {leftList} and retry comparison");
             return leftList.IsSortedWith(rightList);
         }
         else
@@ -48,9 +48,22 @@ public abstract class Element
             var leftList = (ElementList)this;
             var rightList = ((ElementValue)right).ConvertToList();
             
-            Console.WriteLine($"Mixed types; convert right to {right} and retry comparison");
+            // Console.WriteLine($"Mixed types; convert right to {right} and retry comparison");
             return leftList.IsSortedWith(rightList);            
         }
+    }
+
+    public int CompareTo(Element other)
+    {
+        var sortedResult = IsSortedWith(other);
+
+        return sortedResult switch
+        {
+            Result.Sorted => -1,
+            Result.Undetermined => 0,
+            Result.Unsorted => 1,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     public new abstract string ToString();
@@ -65,14 +78,14 @@ public class ElementList : Element
 
     public Result IsSortedWith(ElementList right)
     {
-        Console.WriteLine($"- Compare {ToString()} vs {right.ToString()}");
+        // Console.WriteLine($"- Compare {ToString()} vs {right.ToString()}");
         
         for (var i = 0; i < Elements.Count; i++)
         {
             var rightIsOutOfElements = i > right.Elements.Count - 1;
             if (rightIsOutOfElements)
             {
-                Console.WriteLine("- Right side ran out of items, so inputs are not in the right order");
+                // Console.WriteLine("- Right side ran out of items, so inputs are not in the right order");
                 return Result.Unsorted;
             }
             
@@ -82,19 +95,19 @@ public class ElementList : Element
             var result = leftElement.IsSortedWith(rightElement);
             if (result == Result.Sorted)
             {
-                Console.WriteLine("- Left side is smaller, so inputs are in the right order");
+                // Console.WriteLine("- Left side is smaller, so inputs are in the right order");
                 return Result.Sorted;
             }
             if (result == Result.Unsorted)
             {
-                Console.WriteLine("- Right side is smaller, so inputs are not in the right order");
+                // Console.WriteLine("- Right side is smaller, so inputs are not in the right order");
                 return Result.Unsorted;
             }
         }
 
         if (Elements.Count < right.Elements.Count)
         {
-            Console.WriteLine("- Left side ran out of items, so inputs are in the right order");
+            // Console.WriteLine("- Left side ran out of items, so inputs are in the right order");
             return Result.Sorted; 
         }
         
