@@ -16,9 +16,27 @@ public class Solver
 
     public int Solve1()
     {
-        return 0;
+        var sortedPairs = new List<int>();
+
+        for (var i = 0; i < _pairs.Count; i++)
+        {
+            var pair = _pairs[i];
+            var left = pair.Left;
+            var right = pair.Right;
+
+            var result = left.IsSortedWith(right);
+            
+            Console.WriteLine($"Pair {i+1}: {result}");
+            
+            if (result == Result.Sorted)
+            {
+                sortedPairs.Add(i+1);
+            }
+        }
+        
+        return sortedPairs.Sum(); //4902 is too high
     }
-    
+
     public int Solve2()
     {
         return 0;
@@ -26,8 +44,8 @@ public class Solver
 
     void GetInputs()
     {
-        var text = System.IO.File.ReadAllText("inputshort.txt");
-        // var text = System.IO.File.ReadAllText("input.txt");
+        // var text = System.IO.File.ReadAllText("inputshort.txt");
+        var text = System.IO.File.ReadAllText("input.txt");
 
         var pairsRaw = text.Split($"{Environment.NewLine}{Environment.NewLine}");
 
@@ -38,29 +56,3 @@ public class Solver
         }
     }
 }
-
-public class Pair
-{
-    public Pair(string packetRaw)
-    {
-        var lines = packetRaw.Split($"{Environment.NewLine}").ToList();
-        Left = ElementFactory.BuildPacket(lines[0]);
-        Right = ElementFactory.BuildPacket(lines[1]);
-    }
-
-    // public List<ElementList> Packets { get; set; } = new();
-
-    public ElementList Left { get; set; }
-    public ElementList Right { get; set; }
-    
-}
-
-// public class Packet // same as ElementList?
-// {
-//     public Packet(string packetRaw)
-//     {
-//         
-//     }
-//     
-//     public List<Element> Elements { get; set; }
-// }
