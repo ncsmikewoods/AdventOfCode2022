@@ -20,21 +20,15 @@ public class Solver
 
         for (var i = 0; i < _pairs.Count; i++)
         {
-            var pair = _pairs[i];
-            var left = pair.Left;
-            var right = pair.Right;
-
-            var result = left.IsSortedWith(right);
-            
-            Console.WriteLine($"Pair {i+1}: {result}");
-            
-            if (result == Result.Sorted)
+            Console.WriteLine($"== Pair {i+1} ==");
+            if (_pairs[i].IsSorted())
             {
                 sortedPairs.Add(i+1);
             }
+            Console.WriteLine();
         }
         
-        return sortedPairs.Sum(); //4902 is too high
+        return sortedPairs.Sum();
     }
 
     public int Solve2()

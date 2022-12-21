@@ -14,4 +14,9 @@ public class Pair
 
     public ElementList Left { get; set; }
     public ElementList Right { get; set; }
+
+    public bool IsSorted()
+    {
+        return Left.IsSortedWith(Right) == Result.Sorted;
+    }
 }

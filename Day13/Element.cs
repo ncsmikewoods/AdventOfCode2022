@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Day13;
 
@@ -14,6 +16,8 @@ public abstract class Element
 
     public Result IsSortedWith(Element right)
     {
+        Console.WriteLine($"- Compare {ToString()} vs {right.ToString()}");
+        
         if (IsList && right.IsList)
         {
             var leftList = (ElementList)this;
@@ -36,6 +40,7 @@ public abstract class Element
             var leftList = ((ElementValue)this).ConvertToList();
             var rightList = (ElementList)right;
             
+            Console.WriteLine($"Mixed types; convert left to {leftList} and retry comparison");
             return leftList.IsSortedWith(rightList);
         }
         else
@@ -43,9 +48,12 @@ public abstract class Element
             var leftList = (ElementList)this;
             var rightList = ((ElementValue)right).ConvertToList();
             
+            Console.WriteLine($"Mixed types; convert right to {right} and retry comparison");
             return leftList.IsSortedWith(rightList);            
         }
     }
+
+    public new abstract string ToString();
 }
 
 public class ElementList : Element 
@@ -57,20 +65,49 @@ public class ElementList : Element
 
     public Result IsSortedWith(ElementList right)
     {
+        Console.WriteLine($"- Compare {ToString()} vs {right.ToString()}");
+        
         for (var i = 0; i < Elements.Count; i++)
         {
             var rightIsOutOfElements = i > right.Elements.Count - 1;
-            if (rightIsOutOfElements) return Result.Unsorted;
+            if (rightIsOutOfElements)
+            {
+                Console.WriteLine("- Right side ran out of items, so inputs are not in the right order");
+                return Result.Unsorted;
+            }
             
             var leftElement = Elements[i];
             var rightElement = right.Elements[i];
 
             var result = leftElement.IsSortedWith(rightElement);
-            if (result == Result.Sorted) return Result.Sorted;
-            if (result == Result.Unsorted) return Result.Unsorted;
+            if (result == Result.Sorted)
+            {
+                Console.WriteLine("- Left side is smaller, so inputs are in the right order");
+                return Result.Sorted;
+            }
+            if (result == Result.Unsorted)
+            {
+                Console.WriteLine("- Right side is smaller, so inputs are not in the right order");
+                return Result.Unsorted;
+            }
         }
 
-        return Result.Sorted; // Left ran out before right and there was no determination yet
+        if (Elements.Count < right.Elements.Count)
+        {
+            Console.WriteLine("- Left side ran out of items, so inputs are in the right order");
+            return Result.Sorted; 
+        }
+        
+        return Result.Undetermined; // All elements in each list are identical.
+    }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        sb.Append("[");
+        sb.Append(string.Join(",", Elements.Select(x => x.ToString())));
+        sb.Append("]");
+        return sb.ToString();
     }
 }
 
@@ -92,5 +129,10 @@ public class ElementValue : Element
     public ElementList ConvertToList()
     {
         return new ElementList(new List<Element> { this });
+    }
+    
+    public override string ToString()
+    {
+        return Value.ToString();
     }
 }
